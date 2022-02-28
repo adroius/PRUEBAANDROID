@@ -1,21 +1,21 @@
 version: 2.1
-
-jobs:
-  build:
+executors:
+  my-custom-executor:
     docker:
-      - image: circleci/android:docker pull circleci/android:api-30-node
+      - image: cimg/base:stable
+        auth:
+          # ensure you have first added these secrets
+          # visit app.circleci.com/settings/project/github/adroius/PRUEBAANDROID/environment-variables
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+jobs:
+  my-job-name:
+    executor: my-custom-executor
     steps:
       - checkout
-      - run:
-          name: Install dependencies and build project
-          command: USER circleci
-      - sonarcloud/scan
-
-orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.3
-
+      - run: |
+          # echo Hello, World!
 workflows:
-  main:
+  my-custom-workflow:
     jobs:
-      - build:
-          context: SonarCloud
+      - my-job-name
