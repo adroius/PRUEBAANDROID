@@ -1,25 +1,15 @@
 version: 2.1
-executors:
-  my-custom-executor:
-    docker:
-      - image: cimg/base:stable
-        auth:
-          # ensure you have first added these secrets
-          # visit app.circleci.com/settings/project/github/adroius/PRUEBAANDROID/environment-variables
-          username: $DOCKER_HUB_USER
-          password: $DOCKER_HUB_PASSWORD
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.3
 jobs:
   build:
     docker:
-      - image: 'circleci/openjdk:11-jdk'
+      - image: 'circleci/python:3.7.4'
     steps:
-      - checkout
-      - run:
-          name: Analyze on SonarCloud
-          command: gradle build sonarqube"
-
+    - checkout
+    - sonarcloud/scan
 workflows:
-  main:
+  my-workflow:
     jobs:
       - build:
-          context: SonarCloud
+          context: sonarcloud
