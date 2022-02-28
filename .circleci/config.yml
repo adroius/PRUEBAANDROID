@@ -1,19 +1,26 @@
-
-version: 2
+version: '2.1'
+orbs:
+  android: circleci/android@2.0
 jobs:
-build:
-  working_directory: /tmp
-  steps:
-    - run:
-        name: Creating Dummy Artifacts
-        command: |
-          echo "my artifact file" > /tmp/art-1;
-          mkdir /tmp/artifacts;
-          echo "my artifact files in a dir" > /tmp/artifacts/art-2;
-
-    - store_artifacts:
-        path: /tmp/art-1
-        destination: artifact-file
-
-    - store_artifacts:
-        path: /tmp/artifacts
+  test:
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2021.10.1
+    steps:
+      - checkout
+      - android/create-avd:
+          avd-name: myavd
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: myavd
+          no-window: true
+          restore-gradle-cache-prefix: v1a
+      - android/run-tests
+      - android/save-gradle-cache:
+          cache-prefix: v1a
+workflows:
+  test:
+    jobs:
+      - test
