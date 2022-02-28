@@ -9,13 +9,17 @@ executors:
           username: $DOCKER_HUB_USER
           password: $DOCKER_HUB_PASSWORD
 jobs:
-  my-job-name:
-    executor: my-custom-executor
+  build:
+    docker:
+      - image: 'circleci/openjdk:11-jdk'
     steps:
       - checkout
-      - run: |
-          # echo Hello, World!
+      - run:
+          name: Analyze on SonarCloud
+          command: gradle build sonarqube"
+
 workflows:
-  my-custom-workflow:
+  main:
     jobs:
-      - my-job-name
+      - build:
+          context: SonarCloud
